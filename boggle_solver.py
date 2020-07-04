@@ -157,6 +157,11 @@ def parseSize(userInput):
         print("Invalid grid size, using default value 5")
         return 5;
 
+# Prints out BOGGLE-BOGGLE-BOGGLE as loading bar for fun
+def getNextLoadingBarCharacter(count):
+    return "BOGGLE-"[count%7]
+
+
 def main():
     SIZE = parseSize(input("Input grid size: "))
     GRID = parseGrid(input("Input grid: \n"), SIZE)
@@ -173,6 +178,7 @@ def main():
     print("Trie constructed, starting main loop")
 
     results = []
+    count = 0;
     for i in range(SIZE):
         for j in range(SIZE):
             stack = []
@@ -181,14 +187,16 @@ def main():
                 currentElement = stack.pop()
                 if currentElement.value in long_english_words:
                     results.append(currentElement.value)
-                    sys.stdout.write('-')
+                    sys.stdout.write(getNextLoadingBarCharacter(count))
                     sys.stdout.flush()
+                    count += 1
                 if find_prefix(root, currentElement.value)[0]:
                     stack.extend(currentElement.getUnexploredNeighbors(GRID))
 
     print()
     sorted_list = sorted(results, key=len)
     print(sorted_list)
+
 
 if __name__ == "__main__":
     main()
