@@ -1,23 +1,22 @@
-import enchant 
+SIZE = 5
+DICT_FILE = 'scrabble.txt'
 
-SIZE = 5;
-
-grid = []
-grid.append([]); grid.append([]); grid.append([]); grid.append([]); grid.append([]);
-grid[0].append('e');  grid[0].append('i'); grid[0].append('h'); grid[0].append('v'); grid[0].append('r');
-grid[1].append('in'); grid[1].append('o'); grid[1].append('y'); grid[1].append('a'); grid[1].append('m');
-grid[2].append('r');  grid[2].append('l'); grid[2].append('e'); grid[2].append('u'); grid[2].append('r');
-grid[3].append('s');  grid[3].append('n'); grid[3].append('s'); grid[3].append('o'); grid[3].append('c');
-grid[4].append('p');  grid[4].append('e'); grid[4].append('n'); grid[4].append('i'); grid[4].append('b');
+GRID = []
+GRID.append([]); GRID.append([]); GRID.append([]); GRID.append([]); GRID.append([]);
+GRID[0].append('e');  GRID[0].append('i'); GRID[0].append('h'); GRID[0].append('v'); GRID[0].append('r');
+GRID[1].append('in'); GRID[1].append('o'); GRID[1].append('y'); GRID[1].append('a'); GRID[1].append('m');
+GRID[2].append('r');  GRID[2].append('l'); GRID[2].append('e'); GRID[2].append('u'); GRID[2].append('r');
+GRID[3].append('s');  GRID[3].append('n'); GRID[3].append('s'); GRID[3].append('o'); GRID[3].append('c');
+GRID[4].append('p');  GRID[4].append('e'); GRID[4].append('n'); GRID[4].append('i'); GRID[4].append('b');
 
 def printGrid():
     for i in range(SIZE):
         row = ""
         for j in range(SIZE):
-            row += grid[i][j]
-            if (len(grid[i][j]) == 1):
+            row += GRID[i][j]
+            if (len(GRID[i][j]) == 1):
                 row += "  "
-            elif (len(grid[i][j]) == 2):
+            elif (len(GRID[i][j]) == 2):
                 row += " "
         print(row)
 
@@ -43,28 +42,28 @@ class Element:
         newExplored.append([x, y]);
         if x > 0:
             if [x-1, y] not in explored:
-                unexplored.append(Element(x-1, y, value + grid[x-1][y], newExplored))
+                unexplored.append(Element(x-1, y, value + GRID[x-1][y], newExplored))
         if x < 4:
             if [x+1, y] not in explored:
-                unexplored.append(Element(x+1, y, value + grid[x+1][y], newExplored))
+                unexplored.append(Element(x+1, y, value + GRID[x+1][y], newExplored))
         if y > 0:
             if [x, y-1] not in explored:
-                unexplored.append(Element(x, y-1, value + grid[x][y-1], newExplored))
+                unexplored.append(Element(x, y-1, value + GRID[x][y-1], newExplored))
         if y < 4:
             if [x, y+1] not in explored:
-                unexplored.append(Element(x, y+1, value + grid[x][y+1], newExplored))
+                unexplored.append(Element(x, y+1, value + GRID[x][y+1], newExplored))
         if x > 0 and y > 0:
             if [x-1, y-1] not in explored:
-                unexplored.append(Element(x-1, y-1, value + grid[x-1][y-1], newExplored))
+                unexplored.append(Element(x-1, y-1, value + GRID[x-1][y-1], newExplored))
         if x < 4 and y < 4:
             if [x+1, y+1] not in explored:
-                unexplored.append(Element(x+1, y+1, value + grid[x+1][y+1], newExplored))
+                unexplored.append(Element(x+1, y+1, value + GRID[x+1][y+1], newExplored))
         if x < 4 and y > 0:
             if [x+1, y-1] not in explored:
-                unexplored.append(Element(x+1, y-1, value + grid[x+1][y-1], newExplored))
+                unexplored.append(Element(x+1, y-1, value + GRID[x+1][y-1], newExplored))
         if x > 0 and y < 4:
             if [x-1, y+1] not in explored:
-                unexplored.append(Element(x-1, y+1, value + grid[x-1][y+1], newExplored))
+                unexplored.append(Element(x-1, y+1, value + GRID[x-1][y+1], newExplored))
         return unexplored;
 
     def toString(self):
@@ -72,7 +71,7 @@ class Element:
 
 def testGetUnexplored():
     stack = []
-    stack.append(Element(0, 0, grid[0][0], []));
+    stack.append(Element(0, 0, GRID[0][0], []));
     assert stack[0].value == 'e';
 
     neighbors = stack[0].getUnexploredNeighbors();
@@ -92,7 +91,7 @@ def testGetUnexplored():
     assert secondNeighbors[6].value == 'eoh'
 
 def load_words():
-    with open('scrabble.txt') as word_file:
+    with open(DICT_FILE) as word_file:
     #with open('words_alpha.txt') as word_file:
         valid_words = set(word_file.read().split())
 
@@ -201,7 +200,7 @@ results = []
 for i in range(SIZE):
     for j in range(SIZE):
         stack = []
-        stack.append(Element(i, j, grid[i][j], []))
+        stack.append(Element(i, j, GRID[i][j], []))
         while len(stack) is not 0:
             currentElement = stack.pop()
             if currentElement.value in long_english_words:
