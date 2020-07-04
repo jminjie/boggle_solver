@@ -1,22 +1,17 @@
-SIZE = 5
+import sys
+from typing import Tuple
+
 DICT_FILE = 'scrabble.txt'
 
-GRID = []
-GRID.append([]); GRID.append([]); GRID.append([]); GRID.append([]); GRID.append([]);
-GRID[0].append('e');  GRID[0].append('i'); GRID[0].append('h'); GRID[0].append('v'); GRID[0].append('r');
-GRID[1].append('in'); GRID[1].append('o'); GRID[1].append('y'); GRID[1].append('a'); GRID[1].append('m');
-GRID[2].append('r');  GRID[2].append('l'); GRID[2].append('e'); GRID[2].append('u'); GRID[2].append('r');
-GRID[3].append('s');  GRID[3].append('n'); GRID[3].append('s'); GRID[3].append('o'); GRID[3].append('c');
-GRID[4].append('p');  GRID[4].append('e'); GRID[4].append('n'); GRID[4].append('i'); GRID[4].append('b');
-
-def printGrid():
-    for i in range(SIZE):
+def printGrid(grid, size):
+    print("Grid:")
+    for i in range(size):
         row = ""
-        for j in range(SIZE):
-            row += GRID[i][j]
-            if (len(GRID[i][j]) == 1):
+        for j in range(size):
+            row += grid[i][j]
+            if (len(grid[i][j]) == 1):
                 row += "  "
-            elif (len(GRID[i][j]) == 2):
+            elif (len(grid[i][j]) == 2):
                 row += " "
         print(row)
 
@@ -32,7 +27,7 @@ class Element:
         self.value = value
         self.explored = explored;
 
-    def getUnexploredNeighbors(self):
+    def getUnexploredNeighbors(self, grid):
         unexplored = []
         x = self.x;
         y = self.y;
@@ -42,53 +37,33 @@ class Element:
         newExplored.append([x, y]);
         if x > 0:
             if [x-1, y] not in explored:
-                unexplored.append(Element(x-1, y, value + GRID[x-1][y], newExplored))
+                unexplored.append(Element(x-1, y, value + grid[x-1][y], newExplored))
         if x < 4:
             if [x+1, y] not in explored:
-                unexplored.append(Element(x+1, y, value + GRID[x+1][y], newExplored))
+                unexplored.append(Element(x+1, y, value + grid[x+1][y], newExplored))
         if y > 0:
             if [x, y-1] not in explored:
-                unexplored.append(Element(x, y-1, value + GRID[x][y-1], newExplored))
+                unexplored.append(Element(x, y-1, value + grid[x][y-1], newExplored))
         if y < 4:
             if [x, y+1] not in explored:
-                unexplored.append(Element(x, y+1, value + GRID[x][y+1], newExplored))
+                unexplored.append(Element(x, y+1, value + grid[x][y+1], newExplored))
         if x > 0 and y > 0:
             if [x-1, y-1] not in explored:
-                unexplored.append(Element(x-1, y-1, value + GRID[x-1][y-1], newExplored))
+                unexplored.append(Element(x-1, y-1, value + grid[x-1][y-1], newExplored))
         if x < 4 and y < 4:
             if [x+1, y+1] not in explored:
-                unexplored.append(Element(x+1, y+1, value + GRID[x+1][y+1], newExplored))
+                unexplored.append(Element(x+1, y+1, value + grid[x+1][y+1], newExplored))
         if x < 4 and y > 0:
             if [x+1, y-1] not in explored:
-                unexplored.append(Element(x+1, y-1, value + GRID[x+1][y-1], newExplored))
+                unexplored.append(Element(x+1, y-1, value + grid[x+1][y-1], newExplored))
         if x > 0 and y < 4:
             if [x-1, y+1] not in explored:
-                unexplored.append(Element(x-1, y+1, value + GRID[x-1][y+1], newExplored))
+                unexplored.append(Element(x-1, y+1, value + grid[x-1][y+1], newExplored))
         return unexplored;
 
     def toString(self):
         return "(" + str(self.x) + ", " + str(self.y) + ") " + self.value + " " + str(self.explored)
 
-def testGetUnexplored():
-    stack = []
-    stack.append(Element(0, 0, GRID[0][0], []));
-    assert stack[0].value == 'e';
-
-    neighbors = stack[0].getUnexploredNeighbors();
-    # order doesn't matter
-    assert neighbors[0].value == 'ein'
-    assert neighbors[1].value == 'ei'
-    assert neighbors[2].value == 'eo'
-
-    secondNeighbors = neighbors[2].getUnexploredNeighbors();
-    # 'i' and 'in' are repeated because they're not explored by this search node
-    assert secondNeighbors[0].value == 'eoi'
-    assert secondNeighbors[1].value == 'eol'
-    assert secondNeighbors[2].value == 'eoin'
-    assert secondNeighbors[3].value == 'eoy'
-    assert secondNeighbors[4].value == 'eoe'
-    assert secondNeighbors[5].value == 'eor'
-    assert secondNeighbors[6].value == 'eoh'
 
 def load_words():
     with open(DICT_FILE) as word_file:
@@ -96,9 +71,6 @@ def load_words():
         valid_words = set(word_file.read().split())
 
     return valid_words
-
-from typing import Tuple
-
 
 class TrieNode(object):
     """
@@ -112,7 +84,6 @@ class TrieNode(object):
         self.word_finished = False
         # How many times this character appeared in the addition process
         self.counter = 1
-    
 
 def add(root, word: str):
     """
@@ -139,7 +110,6 @@ def add(root, word: str):
             node = new_node
     # Everything finished. Mark it as the end of a word.
     node.word_finished = True
-
 
 def find_prefix(root, prefix: str) -> Tuple[bool, int]:
     """
@@ -170,44 +140,55 @@ def find_prefix(root, prefix: str) -> Tuple[bool, int]:
     # prefix
     return True, node.counter
 
+def parseGrid(userInput, size):
+    userGrid = []
+    letters = userInput.split();
+    for i in range(size):
+        userGrid.append([])
+        for j in range(size):
+            userGrid[i].append(letters.pop())
+    return userGrid
 
-def dedupe(sortedList):
-    lastword = ""
-    nodupes = []
-    for word in sortedList:
-        if word != lastword:
-            nodupes.append(word)
-        lastword = word
-    return nodupes
+def parseSize(userInput):
+    userInt = int(userInput)
+    if userInt is 4 or userInt is 5:
+        return userInt
+    else:
+        print("Invalid grid size, using default value 5")
+        return 5;
 
-printGrid()
-testGetUnexplored();
+def main():
+    SIZE = parseSize(input("Input grid size: "))
+    GRID = parseGrid(input("Input grid: \n"), SIZE)
 
-english_words = load_words()
-long_english_words = [word.lower() for word in english_words if len(word) >= 4]
+    printGrid(GRID, SIZE)
 
-assert('fate' in long_english_words)
+    english_words = load_words()
+    long_english_words = [word.lower() for word in english_words if len(word) >= 4]
 
-root = TrieNode('*')
-for word in long_english_words:
-    add(root, word)
+    root = TrieNode('*')
+    for word in long_english_words:
+        add(root, word)
 
-print("Trie constructed, starting main loop")
-assert(find_prefix(root, "eohar"))
-assert not find_prefix(root, "eohar")[0]
+    print("Trie constructed, starting main loop")
 
-results = []
-for i in range(SIZE):
-    for j in range(SIZE):
-        stack = []
-        stack.append(Element(i, j, GRID[i][j], []))
-        while len(stack) is not 0:
-            currentElement = stack.pop()
-            if currentElement.value in long_english_words:
-                results.append(currentElement.value)
-                #print(currentElement.value)
-            if find_prefix(root, currentElement.value)[0]:
-                stack.extend(currentElement.getUnexploredNeighbors())
+    results = []
+    for i in range(SIZE):
+        for j in range(SIZE):
+            stack = []
+            stack.append(Element(i, j, GRID[i][j], []))
+            while len(stack) is not 0:
+                currentElement = stack.pop()
+                if currentElement.value in long_english_words:
+                    results.append(currentElement.value)
+                    sys.stdout.write('-')
+                    sys.stdout.flush()
+                if find_prefix(root, currentElement.value)[0]:
+                    stack.extend(currentElement.getUnexploredNeighbors(GRID))
 
-sorted_list = sorted(results, key=len)
-print(dedupe(sorted_list))
+    print()
+    sorted_list = sorted(results, key=len)
+    print(sorted_list)
+
+if __name__ == "__main__":
+    main()
