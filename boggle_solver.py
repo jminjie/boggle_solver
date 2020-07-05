@@ -1,3 +1,4 @@
+#!/usr/local/bin/python3
 import sys
 from typing import Tuple
 
@@ -151,11 +152,7 @@ def parseGrid(userInput, size):
 
 def parseSize(userInput):
     userInt = int(userInput)
-    if userInt is 4 or userInt is 5:
-        return userInt
-    else:
-        print("Invalid grid size, using default value 5")
-        return 5;
+    return userInt;
 
 # Prints out BOGGLE-BOGGLE-BOGGLE as loading bar for fun
 def getNextLoadingBarCharacter(count):
