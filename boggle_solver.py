@@ -27,7 +27,7 @@ class Element:
         self.value = value
         self.explored = explored;
 
-    def getUnexploredNeighbors(self, grid):
+    def getUnexploredNeighbors(self, grid, size):
         unexplored = []
         x = self.x;
         y = self.y;
@@ -38,25 +38,25 @@ class Element:
         if x > 0:
             if [x-1, y] not in explored:
                 unexplored.append(Element(x-1, y, value + grid[x-1][y], newExplored))
-        if x < 4:
+        if x < (size - 1):
             if [x+1, y] not in explored:
                 unexplored.append(Element(x+1, y, value + grid[x+1][y], newExplored))
         if y > 0:
             if [x, y-1] not in explored:
                 unexplored.append(Element(x, y-1, value + grid[x][y-1], newExplored))
-        if y < 4:
+        if y < (size - 1):
             if [x, y+1] not in explored:
                 unexplored.append(Element(x, y+1, value + grid[x][y+1], newExplored))
         if x > 0 and y > 0:
             if [x-1, y-1] not in explored:
                 unexplored.append(Element(x-1, y-1, value + grid[x-1][y-1], newExplored))
-        if x < 4 and y < 4:
+        if x < (size - 1) and y < (size - 1):
             if [x+1, y+1] not in explored:
                 unexplored.append(Element(x+1, y+1, value + grid[x+1][y+1], newExplored))
-        if x < 4 and y > 0:
+        if x < (size - 1) and y > 0:
             if [x+1, y-1] not in explored:
                 unexplored.append(Element(x+1, y-1, value + grid[x+1][y-1], newExplored))
-        if x > 0 and y < 4:
+        if x > 0 and y < (size - 1):
             if [x-1, y+1] not in explored:
                 unexplored.append(Element(x-1, y+1, value + grid[x-1][y+1], newExplored))
         return unexplored;
@@ -191,7 +191,7 @@ def main():
                     sys.stdout.flush()
                     count += 1
                 if find_prefix(root, currentElement.value)[0]:
-                    stack.extend(currentElement.getUnexploredNeighbors(GRID))
+                    stack.extend(currentElement.getUnexploredNeighbors(GRID, SIZE))
 
     print()
     sorted_list = sorted(results, key=len)
