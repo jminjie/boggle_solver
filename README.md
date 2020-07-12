@@ -10,6 +10,8 @@ Example 5x5 grid:
 
 Should also work with other python versions > 3.
 
+(More example boards in the directory.)
+
 ## Options
 - Change the dictionary by editing the value of DICT.
 `20k.txt` is a list of the 20k most common English words (missing many real words).
