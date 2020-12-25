@@ -160,7 +160,7 @@ def getNextLoadingBarCharacter(count):
 
 
 def main():
-    SIZE = parseSize(input("Input grid size: "))
+    SIZE = 5 #parseSize(input("Input grid size: "))
     GRID = parseGrid(input("Input grid: \n"), SIZE)
 
     printGrid(GRID, SIZE)
@@ -176,6 +176,7 @@ def main():
 
     results = []
     count = 0;
+    prefix_checks = 0
     for i in range(SIZE):
         for j in range(SIZE):
             stack = []
@@ -187,12 +188,23 @@ def main():
                     sys.stdout.write(getNextLoadingBarCharacter(count))
                     sys.stdout.flush()
                     count += 1
+                prefix_checks += 1
                 if find_prefix(root, currentElement.value)[0]:
                     stack.extend(currentElement.getUnexploredNeighbors(GRID, SIZE))
 
     print()
     sorted_list = sorted(results, key=len)
-    print(sorted_list)
+    counted_list = {}
+    for word in sorted_list:
+        if word in counted_list:
+            counted_list[word] += 1
+        else:
+            counted_list[word] = 1
+
+    #print(sorted_list)
+    print(counted_list)
+    print(len(sorted_list))
+    print(prefix_checks)
 
 
 if __name__ == "__main__":
